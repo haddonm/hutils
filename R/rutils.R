@@ -388,6 +388,35 @@ info <- function(invar,verbose=FALSE) {
   }
 } # end of info
 
+#' @title makelabel generates a label from text and values
+#'
+#' @description makelabel It is common to want a label with text and a series 
+#'     of values. But paste and paste0 cycles the text and the values. To
+#'     avoid this makelabel first combines the values as text and then
+#'     adds the input text to the front of the values
+#'
+#' @param txt the input text for the label, can be empty
+#' @param vect the series of values to be included in the label
+#' @param sep the separator for the components; defaults to  '_'
+#' @param digits how many significant digits for the values; default = 3
+#'
+#' @return a character string made up of text and values
+#' @export
+#'
+#' @examples
+#' pars <- c(18.3319532,33.7935124,3.0378107,6.0194465,0.5815360,0.4270468)
+#' makelabel("Cohort1",pars[c(1,3,5)],sep="__")
+#' makelabel("",pars[c(1,3,5)],sep="__",digits=4)
+makelabel <- function (txt, vect, sep = "_", digits = 3) {
+  label <- round(vect[1], digits)
+  if (length(vect) > 1) {
+    nnum <- length(vect)
+    for (i in 2:nnum) label <- paste(label, round(vect[i], digits), sep = sep)
+  }
+  if (nchar(txt) > 0) label <- paste0(txt,sep,tmp)
+  return(label)
+} # end of makelabel
+
 #' @title makeUnit generates a unit matrix whose diagonal can be changed
 #' 
 #' @description makeUnit generates a unit matrix but includes the facility
@@ -435,6 +464,7 @@ makeUnit <- function(N,diagvalue=1.0) {
 magnitude <- function(x) {
   return(10^(floor(log10(abs(x)))))
 }
+
 
 #' @title outfit tidy print of output from optim, nlminb, or nlm
 #'
@@ -1943,3 +1973,19 @@ pythag <- function(x) {  # x = ans
   return(ans) 
 }
 
+#' @title '%ni%' identifies which element in x is NOT in y
+#'
+#' @param x a vector of elements which can be numeric or character
+#' @param y a vector of elements which can be numeric or character
+#'
+#' @export
+#' 
+#' @examples
+#'   x <- 1:10
+#'   y <- 6:18
+#'   x %ni% y
+#'   pick <- (x %ni% y)
+#'   x[pick]
+`%ni%` <- function(x,y) {
+  !(x %in% y)
+}
